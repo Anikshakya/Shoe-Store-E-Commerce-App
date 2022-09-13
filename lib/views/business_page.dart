@@ -16,143 +16,141 @@ class _BusinessPageState extends State<BusinessPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Container(
-          child: StreamBuilder<QuerySnapshot>(
-            stream: FirebaseFirestore.instance
-                .collection("brand")
-                .where('email', isEqualTo: user!.email)
-                .snapshots(),
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return const Text("No data found....");
-              } else {
-                List<QueryDocumentSnapshot<Object?>> fireStoreItems =
-                    snapshot.data!.docs;
-                return
-                    //  fireStoreItems[0]['image'] != ""
-                    //     ? CachedNetworkImage(
-                    //         imageUrl: fireStoreItems[0]['image'],
-                    //         fit: BoxFit.cover,
-                    //       )
-                    //     : Image.asset(
-                    //         "images/profile.png",
-                    //         fit: BoxFit.cover,
-                    //       );
+        child: StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance
+              .collection("brand")
+              .where('email', isEqualTo: user!.email)
+              .snapshots(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return const Text("No data found....");
+            } else {
+              List<QueryDocumentSnapshot<Object?>> fireStoreItems =
+                  snapshot.data!.docs;
+              return
+                  //  fireStoreItems[0]['image'] != ""
+                  //     ? CachedNetworkImage(
+                  //         imageUrl: fireStoreItems[0]['image'],
+                  //         fit: BoxFit.cover,
+                  //       )
+                  //     : Image.asset(
+                  //         "images/profile.png",
+                  //         fit: BoxFit.cover,
+                  //       );
 
-                    //Brand Image & logo
-                    Stack(
-                  children: [
-                    fireStoreItems[0]['image'] != ""
-                        ? CachedNetworkImage(
-                            fadeInDuration: const Duration(milliseconds: 0),
-                            fadeOutDuration: const Duration(milliseconds: 0),
-                            imageUrl: fireStoreItems[0]['image'],
-                            width: MediaQuery.of(context).size.width,
-                            height: 182,
-                            fit: BoxFit.cover,
-                          )
-                        : Image.asset(
-                            "images/profile.png",
-                            fit: BoxFit.cover,
+                  //Brand Image & logo
+                  Stack(
+                children: [
+                  fireStoreItems[0]['image'] != ""
+                      ? CachedNetworkImage(
+                          fadeInDuration: const Duration(milliseconds: 0),
+                          fadeOutDuration: const Duration(milliseconds: 0),
+                          imageUrl: fireStoreItems[0]['image'],
+                          width: MediaQuery.of(context).size.width,
+                          height: 182,
+                          fit: BoxFit.cover,
+                        )
+                      : Image.asset(
+                          "images/profile.png",
+                          fit: BoxFit.cover,
+                        ),
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: 182,
+                    decoration: const BoxDecoration(
+                        color: Color.fromARGB(131, 185, 185, 185)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          const SizedBox(
+                            height: 20,
                           ),
-                    Container(
-                      width: MediaQuery.of(context).size.width,
-                      height: 182,
-                      decoration: const BoxDecoration(
-                          color: Color.fromARGB(131, 185, 185, 185)),
-                      child: Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                ClipRRect(
-                                  borderRadius: const BorderRadius.all(
-                                      Radius.circular(10)),
-                                  child: Container(
-                                    height: 84,
-                                    width: 84,
-                                    color: Colors.white,
-                                    child: fireStoreItems[0]['image'] != ""
-                                        ? CachedNetworkImage(
-                                            imageUrl: fireStoreItems[0]
-                                                ['image'],
-                                            height: 80,
-                                            width: 80,
-                                            fit: BoxFit.cover,
-                                          )
-                                        : Image.asset(
-                                            "images/profile.png",
-                                            fit: BoxFit.cover,
-                                          ),
-                                  ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              ClipRRect(
+                                borderRadius: const BorderRadius.all(
+                                    Radius.circular(10)),
+                                child: Container(
+                                  height: 84,
+                                  width: 84,
+                                  color: Colors.white,
+                                  child: fireStoreItems[0]['image'] != ""
+                                      ? CachedNetworkImage(
+                                          imageUrl: fireStoreItems[0]
+                                              ['image'],
+                                          height: 80,
+                                          width: 80,
+                                          fit: BoxFit.cover,
+                                        )
+                                      : Image.asset(
+                                          "images/profile.png",
+                                          fit: BoxFit.cover,
+                                        ),
                                 ),
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: const [
-                                    Text(
-                                      'asdfg',
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                    Text(
-                                      'asdfg',
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                    Text(
-                                      'asdfg',
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                  ],
-                                ),
-                                ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    onPrimary: Colors.white,
-                                    primary: Colors.black87,
-                                  ),
-                                  onPressed: () {},
-                                  child: const Text("Edit Page"),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            GestureDetector(
-                              onTap: () {},
-                              child: Row(
+                              ),
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: const [
                                   Text(
-                                    "Visit our website:",
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16,
-                                    ),
+                                    'asdfg',
+                                    style: TextStyle(color: Colors.white),
                                   ),
-                                  SizedBox(
-                                    width: 5,
+                                  Text(
+                                    'asdfg',
+                                    style: TextStyle(color: Colors.white),
                                   ),
-                                  Icon(
-                                    Icons.link,
-                                    color: Colors.white,
-                                    size: 28,
-                                  )
+                                  Text(
+                                    'asdfg',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
                                 ],
                               ),
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  onPrimary: Colors.white,
+                                  primary: Colors.black87,
+                                ),
+                                onPressed: () {},
+                                child: const Text("Edit Page"),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          GestureDetector(
+                            onTap: () {},
+                            child: Row(
+                              children: const [
+                                Text(
+                                  "Visit our website:",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 5,
+                                ),
+                                Icon(
+                                  Icons.link,
+                                  color: Colors.white,
+                                  size: 28,
+                                )
+                              ],
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                );
-              }
-            },
-          ),
+                  ),
+                ],
+              );
+            }
+          },
         ),
       ),
     );

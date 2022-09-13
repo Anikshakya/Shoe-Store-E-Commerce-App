@@ -12,7 +12,6 @@ import 'package:jutta_ghar/tiles/test_tile.dart';
 import 'package:jutta_ghar/views/admin_view_page.dart';
 import 'package:jutta_ghar/views/brand_list_page.dart';
 import 'package:jutta_ghar/views/brand_page.dart';
-import 'package:jutta_ghar/views/business_page.dart';
 import 'package:jutta_ghar/views/offer_page.dart';
 import 'package:jutta_ghar/views/order_page.dart';
 import 'package:jutta_ghar/views/search_page.dart';
@@ -371,6 +370,7 @@ class _HomePageState extends State<HomePage> {
                       }
                     },
                   ),
+                  
                   //Brands Section
                   Padding(
                     padding: const EdgeInsets.only(
