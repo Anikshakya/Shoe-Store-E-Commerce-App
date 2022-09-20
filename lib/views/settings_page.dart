@@ -4,11 +4,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:jutta_ghar/services/google_sign_in_services.dart';
 import 'package:jutta_ghar/utils/utils.dart';
-import 'package:jutta_ghar/views/business_page.dart';
+import 'package:jutta_ghar/views/business_page_admin.dart';
 import 'package:jutta_ghar/views/business_page_signup.dart';
 import 'package:jutta_ghar/views/change_password_page.dart';
 import 'package:jutta_ghar/views/following_page.dart';
 import 'package:jutta_ghar/views/notification_page.dart';
+import 'package:jutta_ghar/views/order_history.dart';
 import 'package:jutta_ghar/views/permisson_page.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher_string.dart';
@@ -281,7 +282,6 @@ class _SettingsState extends State<SettingsPage> {
                     onTap: () => Get.to(() => FollowingPage()),
                     child: Container(
                       decoration: BoxDecoration(
-                 
                   color: Colors.white,
                 ),
                       height: 60,
@@ -362,18 +362,17 @@ class _SettingsState extends State<SettingsPage> {
                   ),
                   //----Order History-----
                   GestureDetector(
-                    onTap: () {},
+                    onTap: ()=> Get.to(()=>OrderHistory()),
                     child: Container(
                       height: 60,
                       padding: EdgeInsets.all(15),
                       decoration: BoxDecoration(
-                 
-                  color: Colors.white,
-                ),
+                        color: Colors.white,
+                      ),
                       child: Row(
                         children: [
                           Row(
-                            children: const [
+                            children: [
                               Icon(
                                 Icons.history,
                                 size: 19,
@@ -388,6 +387,44 @@ class _SettingsState extends State<SettingsPage> {
                                   fontSize: 16,
                                   fontWeight: FontWeight.w400,
                                   color: Color.fromARGB(255, 116, 116, 116),
+                                ),
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.only(left: 10, right: 10),
+                                child: StreamBuilder<QuerySnapshot>(
+                                  stream: FirebaseFirestore.instance
+                                      .collection("order_requests")
+                                      .doc(user!.email)
+                                      .collection("products")
+                                      .snapshots(),
+                                  builder: ((context, snapshot) {
+                                    if (!snapshot.hasData) {
+                                      return const SizedBox();
+                                    } else if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return const SizedBox();
+                                    } else {
+                                      List<QueryDocumentSnapshot<Object?>>
+                                          firestoreOrders = snapshot.data!.docs;
+                                      return Container(
+                                        height: 17,
+                                        width: 17,
+                                        decoration: const BoxDecoration(
+                                          color: Color.fromARGB(
+                                              255, 255, 217, 193),
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Center(
+                                          child: Text( firestoreOrders.length.toString(),
+                                            style: const TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 11),
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  }),
                                 ),
                               ),
                             ],
@@ -442,7 +479,7 @@ class _SettingsState extends State<SettingsPage> {
                             snapshot.data!.docs;
                         return firestoreUsers[0]["role"] == "vendor"
                             ? GestureDetector(
-                                onTap: () => Get.to(() => BusinessPage()),
+                                onTap: () => Get.to(() => BusinssPageAdmin()),
                                 child: Padding(
                                   padding: const EdgeInsets.all(3),
                                   child: Row(

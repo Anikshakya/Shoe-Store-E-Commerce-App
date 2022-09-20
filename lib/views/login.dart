@@ -2,6 +2,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:jutta_ghar/services/google_sign_in_services.dart';
 import 'package:jutta_ghar/views/bottom_nav.dart';
 import 'package:jutta_ghar/views/forgot_password.dart';
@@ -425,10 +426,15 @@ class _LoginPageState extends State<LoginPage> {
                                         duration: Duration(seconds: 2),
                                         snackPosition: SnackPosition.BOTTOM);
                                   },
-                                  child: Image.asset(
-                                    "images/facebook.png",
-                                    height: 60,
-                                    width: 60,
+                                  child: GestureDetector(
+                                    onTap: (){
+                                      logInWithFacebook();
+                                    },
+                                    child: Image.asset(
+                                      "images/facebook.png",
+                                      height: 60,
+                                      width: 60,
+                                    ),
                                   ),
                                 ),
                                 const SizedBox(
@@ -511,6 +517,46 @@ class _LoginPageState extends State<LoginPage> {
       Get.back();
     }
     //----Navigator.of(context) not working-----
+    navigatorKey.currentState!.popUntil((route) => route.isFirst);
+  }
+
+  //Login With Facebook
+    void logInWithFacebook() async{
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => const Center(
+              child: CircularProgressIndicator(),
+            ));
+    try{
+      final userData = await FacebookAuth.instance.getUserData();
+      
+      final facebookLogin = await FacebookAuth.instance.login(
+        permissions: [userData['email']],
+        loginBehavior: LoginBehavior.katanaOnly,
+      );
+      // final FacebookLogin facebookSignIn = new FacebookLogin();
+
+      final facebookAuthCredential = FacebookAuthProvider.credential(facebookLogin.accessToken!.token);
+      
+      await FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
+
+      await FirebaseFirestore.instance.collection("users").doc(userData['email']).set({
+        'email': userData['email'],
+        'name': userData['name'],
+        'phoneNumber': "",
+        'role': "user",
+        'adminrole': "user",
+      }).then((value) => Get.snackbar('Irasshaimase!', 'Logged in successfully',
+          duration: const Duration(milliseconds: 2000),
+          backgroundColor: const Color.fromARGB(126, 255, 255, 255)));
+    }
+    on FirebaseAuthException catch (e) {
+      Get.snackbar('Error', e.message.toString(),
+          duration: const Duration(milliseconds: 2000),
+          backgroundColor: const Color.fromARGB(126, 255, 255, 255));
+    }
+     //Navigator.of(context) not working!
     navigatorKey.currentState!.popUntil((route) => route.isFirst);
   }
 }

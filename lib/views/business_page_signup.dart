@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jutta_ghar/utils/utils.dart';
-import 'package:jutta_ghar/views/business_page.dart';
+import 'package:jutta_ghar/views/business_page_admin.dart';
 
 class BusinessPageSignUp extends StatefulWidget {
   const BusinessPageSignUp({Key? key}) : super(key: key);
@@ -127,8 +127,6 @@ class _BusinessPageSignUpState extends State<BusinessPageSignUp> {
                 ),
                 TextFormField(
                   autovalidateMode: AutovalidateMode.onUserInteraction,
-                  validator: (name) =>
-                      name!.isEmpty ? "Web Site field cannot be empty." : null,
                   textCapitalization: TextCapitalization.words,
                   textInputAction: TextInputAction.next,
                   controller: websiteController,
@@ -142,7 +140,7 @@ class _BusinessPageSignUpState extends State<BusinessPageSignUp> {
                     ),
                     iconColor: Colors.teal,
                     hintText: 'Enter your website',
-                    labelText: 'Website',
+                    labelText: 'Website (Optional)',
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(50),
                       borderSide: const BorderSide(color: Colors.grey),
@@ -303,19 +301,17 @@ class _BusinessPageSignUpState extends State<BusinessPageSignUp> {
     );
     try {
       //sends page info to firebase
-      var docId =
-                FirebaseFirestore.instance.collection("products").doc().id;
-      await FirebaseFirestore.instance
-          .collection("brand")
-          .doc(emailController.text.trim())
+      var docId =FirebaseFirestore.instance.collection("pages").doc().id;
+      await FirebaseFirestore.instance.collection("pages")
+          .doc(emailController.text.trim().toString())
           .set(
         {
-          'email': emailController.text.trim().toLowerCase(),
-          'name': nameController.text.trim(),
-          'contact': contactController.text.trim(),
-          'location': locationController.text.trim(),
-          'website': websiteController.text.trim(),
-          'description': descriptionController.text.trim(),
+          'email': emailController.text.trim().toLowerCase().toString(),
+          'name': nameController.text.trim().toString(),
+          'contact': contactController.text.trim().toString(),
+          'location': locationController.text.trim().toString(),
+          'website': websiteController.text.trim().toString(),
+          'description': descriptionController.text.trim().toString(),
           'created_time': date.toLocal().toString(),
           'logo': '',
           'image': '',
@@ -325,17 +321,15 @@ class _BusinessPageSignUpState extends State<BusinessPageSignUp> {
 
       Map<String, dynamic> data = {
         'role': 'vendor',
-        'admin_role': nameController.text.trim(),
+        'admin_role': nameController.text.trim().toString(),
       };
-      await FirebaseFirestore.instance
-          .collection("users")
-          .doc(user!.email)
+      await FirebaseFirestore.instance.collection("users").doc(user!.email)
           .update(data)
           .then((value) => Get.snackbar("Business page created Sucessfully",
               "Business Profile created Sucessfully",
               backgroundColor: const Color.fromARGB(115, 105, 240, 175)))
           .then((value) => Navigator.push(context,
-              MaterialPageRoute(builder: ((context) => const BusinessPage()))));
+              MaterialPageRoute(builder: ((context) => const BusinssPageAdmin()))));
     } on FirebaseAuthException catch (e) {
       Utils.showSnackBar(e.message.toString(), false);
       Navigator.pop(context);

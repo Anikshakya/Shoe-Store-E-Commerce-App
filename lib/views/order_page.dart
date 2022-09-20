@@ -691,7 +691,9 @@ class _OrderPageState extends State<OrderPage> {
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        buyNow();
+                      },
                       child: Row(
                         children: const [
                           Padding(
@@ -748,6 +750,44 @@ class _OrderPageState extends State<OrderPage> {
       };
       documentReferencer.set(data).then((value) => Navigator.pop(context)).then(
           (value) => Get.snackbar("Added", "Item Added to Cart",
+              backgroundColor: const Color.fromARGB(115, 105, 240, 175)));
+    } on FirebaseException catch (e) {
+      Get.snackbar("Error", e.toString(), backgroundColor: Colors.redAccent);
+    }
+  }
+
+  //Order
+  buyNow(){
+     final user = FirebaseAuth.instance.currentUser;
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+    try {
+      DocumentReference documentReferencer = FirebaseFirestore.instance
+          .collection("order_requests")
+          .doc(user!.email)
+          .collection("products")
+          .doc(widget.productID);
+      Map<String, dynamic> data = {
+        'productName': widget.name,
+        'brand_store': widget.brand,
+        'category': widget.category,
+        'description': widget.description,
+        'discount': widget.discount,
+        'price': widget.price,
+        'productID': widget.productID,
+        'offer': widget.offer,
+        'type': widget.type,
+        'image': widget.image,
+        'order_date' : DateTime.now().toString(),
+        'quantity': screenValue,
+      };
+      documentReferencer.set(data).then((value) => Navigator.pop(context)).then(
+          (value) => Get.snackbar("Order Placed", "Your order has successfully been placed",
               backgroundColor: const Color.fromARGB(115, 105, 240, 175)));
     } on FirebaseException catch (e) {
       Get.snackbar("Error", e.toString(), backgroundColor: Colors.redAccent);

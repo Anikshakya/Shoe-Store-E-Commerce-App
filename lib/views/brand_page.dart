@@ -10,7 +10,7 @@ import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class BrandPage extends StatefulWidget {
-  final brandName, image, logo, website, id;
+  final brandName, image, logo, website, id, createdTime;
   const BrandPage({
     Key? key,
     this.brandName,
@@ -18,6 +18,7 @@ class BrandPage extends StatefulWidget {
     this.logo,
     this.website,
     this.id,
+    this.createdTime,
   }) : super(key: key);
 
   @override
@@ -104,13 +105,21 @@ class _BrandPageState extends State<BrandPage> {
                                   ),
                                 ],
                               ),
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  onPrimary: Colors.white,
-                                  primary: Colors.black87,
-                                ),
-                                onPressed: () => follow(),
-                                child: const Text("Follow"),
+                              StreamBuilder<QuerySnapshot>(
+                                stream: FirebaseFirestore.instance.collection('following').doc(user!.email).collection('pages').where('page_id', isEqualTo: widget.id.toString()).snapshots(),
+                                builder: (context, snapshot) {
+                                  // List<QueryDocumentSnapshot<Object?>> firestoreData =snapshot.data!.docs;
+                                  return ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      onPrimary: Colors.white,
+                                      primary: Colors.black87,
+                                    ),
+                                    onPressed: (){
+                                      follow();
+                                    },
+                                    child: const Text('Follow'),
+                                  );
+                                }
                               ),
                             ],
                           ),
@@ -300,5 +309,15 @@ class _BrandPageState extends State<BrandPage> {
     } on FirebaseException catch (e) {
       Get.snackbar("Error", e.toString(), backgroundColor: Colors.redAccent);
     }
+  }
+  unfollow() {
+    var user = FirebaseAuth.instance.currentUser;
+    FirebaseFirestore.instance
+        .collection("following")
+        .doc(user!.email)
+        .collection("pages")
+        .doc(widget.id)
+        .delete()
+        .then((value) => Get.snackbar("Unfollowed","You have unfollowed the page",duration: const Duration(seconds: 1),));
   }
 }

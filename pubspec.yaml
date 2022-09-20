@@ -92,6 +92,9 @@ dependencies:
   #state management
   provider: ^6.0.3
 
+  #Facebook Auth
+  flutter_facebook_auth: ^4.4.1+1
+
 
 
 dev_dependencies:

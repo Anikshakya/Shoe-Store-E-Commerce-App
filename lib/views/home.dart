@@ -12,6 +12,7 @@ import 'package:jutta_ghar/tiles/test_tile.dart';
 import 'package:jutta_ghar/views/admin_view_page.dart';
 import 'package:jutta_ghar/views/brand_list_page.dart';
 import 'package:jutta_ghar/views/brand_page.dart';
+import 'package:jutta_ghar/views/business_page.dart';
 import 'package:jutta_ghar/views/offer_page.dart';
 import 'package:jutta_ghar/views/order_page.dart';
 import 'package:jutta_ghar/views/search_page.dart';
@@ -167,7 +168,7 @@ class _HomePageState extends State<HomePage> {
                                 padding:
                                     const EdgeInsets.only(top: 10, bottom: 2),
                                 child: Text(
-                                  "GOOD MORNING, ${fName[0].toUpperCase()}",
+                                  "GOOD MORNING , ${fName[0].toUpperCase()}",
                                   maxLines: 2,
                                   style: const TextStyle(
                                     fontSize: 15,
@@ -266,7 +267,7 @@ class _HomePageState extends State<HomePage> {
                               ),
                             ),
                             CountDownText(
-                              due: DateTime.parse("2022-08-20 00:00:00"),
+                              due: DateTime.parse("2023-08-20 00:00:00"),
                               finishedText: "Ended",
                               showLabel: true,
                               style: TextStyle(
@@ -461,56 +462,113 @@ class _HomePageState extends State<HomePage> {
                     },
                   ),
 
-                  // //test
-                  // SizedBox(
-                  //   height: 20,
-                  // ),
-
-                  // Padding(
-                  //   padding: const EdgeInsets.only(
-                  //       left: 15, right: 15, top: 10, bottom: 10),
-                  //   child: Row(
-                  //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //     children: const [
-                  //       Text("Product Model"),
-                  //       Text("View More"),
-                  //     ],
-                  //   ),
-                  // ),
-                  // GetX<ProductController>(
-                  //   builder: (controller) {
-                  //     return AspectRatio(
-                  //       aspectRatio: 1.35,
-                  //       child: ListView.builder(
-                  //         scrollDirection: Axis.horizontal,
-                  //         shrinkWrap: true,
-                  //         itemCount: productController.productList.length,
-                  //         itemBuilder: (context, index) =>
-                  //             HorizontalProductTile(
-                  //           name: controller.productList[index].productName,
-                  //           image: controller.productList[index].image,
-                  //           description:
-                  //               controller.productList[index].description,
-                  //           discount: controller.productList[index].discount,
-                  //           price: controller.productList[index].price,
-                  //           ontap: () => Get.to(() => OrderPage(
-                  //                 price: controller.productList[index].price,
-                  //                 brand:
-                  //                     controller.productList[index].brandStore,
-                  //                 description:
-                  //                     controller.productList[index].description,
-                  //                 discount:
-                  //                     controller.productList[index].discount,
-                  //                 image: controller.productList[index].image,
-                  //                 name:
-                  //                     controller.productList[index].productName,
-                  //               )),
-                  //         ),
-                  //       ),
-                  //     );
-                  //   },
-                  // ),
-
+                  //Pages Section
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        left: 10, right: 15, top: 16, bottom: 5),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text("PAGES",
+                            style: TextStyle(
+                                letterSpacing: 0.4,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500)),
+                        GestureDetector(
+                          onTap: (){},
+                          child: Row(
+                            children: const [
+                              Text(
+                                "View More",
+                                style: TextStyle(
+                                    fontSize: 15, fontWeight: FontWeight.w400),
+                              ),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              Icon(
+                                Icons.arrow_forward_ios,
+                                size: 13.5,
+                              )
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection('pages')
+                        .snapshots(),
+                    builder: (BuildContext context, snapshot) {
+                      if (!snapshot.hasData) {
+                        return SizedBox(
+                          height: MediaQuery.of(context).size.height -
+                              kToolbarHeight,
+                          child: Center(
+                            child: Text(
+                              "Loading...",
+                              style: TextStyle(fontWeight: FontWeight.w300),
+                            ),
+                          ),
+                        );
+                      } else if (snapshot.connectionState ==
+                          ConnectionState.waiting) {
+                        return SizedBox(
+                          height: MediaQuery.of(context).size.height -
+                              kToolbarHeight,
+                          child: Center(
+                            child: Text(
+                              "Loading...",
+                              style: TextStyle(fontWeight: FontWeight.w300),
+                            ),
+                          ),
+                        );
+                      } else {
+                        List<QueryDocumentSnapshot<Object?>> firestorePages =
+                            snapshot.data!.docs;
+                        return SizedBox(
+                          height: 120,
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            shrinkWrap: true,
+                            itemCount: firestorePages.length,
+                            itemBuilder: (context, index) => GestureDetector(
+                              onTap: () {
+                                Get.to(()=> BusinessPage(
+                                  id: firestorePages[index]['id'],
+                                  image: firestorePages[index]['image'],
+                                  logo: firestorePages[index]['logo'],
+                                  pageName: firestorePages[index]['name'],
+                                  website: firestorePages[index]['website'],
+                                ));
+                              },
+                              child: Card(
+                                child: Column(
+                                  children: [
+                                    firestorePages[index]['logo'] == ''
+                                    ?Image.asset(
+                                      "images/profile.png",
+                                      height: 80,
+                                      width: 80,
+                                      fit: BoxFit.cover,
+                                    )
+                                    :CachedNetworkImage(
+                                          imageUrl: firestorePages[index]['logo'],
+                                          height: 80,
+                                          width: 80,
+                                          fit: BoxFit.cover,
+                                        ),
+                                    Text(firestorePages[index]['name']),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      }
+                    },
+                  ),
                   //test2
                   Padding(
                     padding: const EdgeInsets.only(
@@ -615,18 +673,14 @@ class _HomePageState extends State<HomePage> {
                           scrollDirection: Axis.horizontal,
                           itemCount: categoryName.length,
                           itemBuilder: (context, index) => CategoryButton(
-                            categoryName:
-                                categoryName[index]["name"].toString(),
+                            categoryName:categoryName[index]["name"].toString(),
                             ontap: () {
-                              _categoryName.value =
-                                  categoryName[index]["name"].toString();
+                              _categoryName.value = categoryName[index]["name"].toString();
                             },
-                            color: categoryName[index]["name"] ==
-                                    _categoryName.value
+                            color: categoryName[index]["name"] == _categoryName.value
                                 ? "0xff000000"
                                 : "0xffededed",
-                            textColor: categoryName[index]["name"] ==
-                                    _categoryName.value
+                            textColor: categoryName[index]["name"] == _categoryName.value
                                 ? "0xffffffff"
                                 : "0xff000000",
                           ),

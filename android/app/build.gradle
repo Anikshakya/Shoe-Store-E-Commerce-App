@@ -69,6 +69,7 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:30.2.0')
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.android.support:multidex:1.0.3'
+    implementation 'com.facebook.android:facebook-login:latest.release'
 }
 
 apply plugin: 'com.google.gms.google-services'
