@@ -10,14 +10,14 @@ import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class BusinessPage extends StatefulWidget {
-  final pageName, image, logo, website, id;
+  final pageName, image, logo, website, id, description;
   const BusinessPage({
     Key? key,
     this.pageName,
     this.image,
     this.logo,
     this.website,
-    this.id,
+    this.id, this.description,
   }) : super(key: key);
 
   @override
@@ -45,11 +45,19 @@ class _BusinessPageState extends State<BusinessPage> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               //Brand Image & logo
               Stack(
                 children: [
-                  CachedNetworkImage(
+                  widget.image == ''
+                  ?Image.asset(
+                    "images/profile.png",
+                    width: MediaQuery.of(context).size.width,
+                    height: 182,
+                      fit: BoxFit.cover,
+                    )
+                  : CachedNetworkImage(
                     fadeInDuration: const Duration(milliseconds: 0),
                     fadeOutDuration: const Duration(milliseconds: 0),
                     imageUrl: widget.image,
@@ -60,8 +68,7 @@ class _BusinessPageState extends State<BusinessPage> {
                   Container(
                     width: MediaQuery.of(context).size.width,
                     height: 182,
-                    decoration: const BoxDecoration(
-                        color: Color.fromARGB(131, 185, 185, 185)),
+                    decoration: const BoxDecoration(color: Color.fromARGB(131, 185, 185, 185)),
                     child: Padding(
                       padding: const EdgeInsets.all(10.0),
                       child: Column(
@@ -80,7 +87,14 @@ class _BusinessPageState extends State<BusinessPage> {
                                   height: 84,
                                   width: 84,
                                   color: Colors.white,
-                                  child: CachedNetworkImage(
+                                  child: widget.logo == ''
+                                  ?Image.asset(
+                                      "images/profile.png",
+                                      height: 80,
+                                      width: 80,
+                                      fit: BoxFit.cover,
+                                    )
+                                    :CachedNetworkImage(
                                     imageUrl: widget.logo,
                                     fit: BoxFit.cover,
                                     height: 75,
@@ -90,16 +104,16 @@ class _BusinessPageState extends State<BusinessPage> {
                               ),
                               Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
-                                children: const [
+                                children: [
                                   Text(
-                                    'asdfg',
-                                    style: TextStyle(color: Colors.white),
+                                    widget.pageName,
+                                    style:  const TextStyle(color: Colors.white),
                                   ),
                                   Text(
-                                    'asdfg',
-                                    style: TextStyle(color: Colors.white),
+                                    widget.description,
+                                    style: const TextStyle(color: Colors.white),
                                   ),
-                                  Text(
+                                  const Text(
                                     'asdfg',
                                     style: TextStyle(color: Colors.white),
                                   ),
@@ -121,7 +135,9 @@ class _BusinessPageState extends State<BusinessPage> {
                           widget.website == ''
                           ?const SizedBox()
                           :GestureDetector(
-                            onTap: () =>launchUrlString(widget.website.toString()),
+                            onTap: (){
+                              launchUrlString(widget.website.toString());
+                            },
                             child: Row(
                               children: const [
                                 Text(
@@ -147,6 +163,13 @@ class _BusinessPageState extends State<BusinessPage> {
                     ),
                   ),
                 ],
+              ),
+
+              //Posts
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(onPrimary: Colors.white, primary: Colors.black87,),
+                  onPressed: () {},
+                  child: const Text("Posts"),
               ),
               //Body
               Container(

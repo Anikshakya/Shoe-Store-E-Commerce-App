@@ -541,6 +541,7 @@ class _HomePageState extends State<HomePage> {
                                   logo: firestorePages[index]['logo'],
                                   pageName: firestorePages[index]['name'],
                                   website: firestorePages[index]['website'],
+                                  description: firestorePages[index]['description'],
                                 ));
                               },
                               child: Card(
