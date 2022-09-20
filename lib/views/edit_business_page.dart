@@ -602,25 +602,6 @@ class _EditBusinessPageState extends State<EditBusinessPage> {
                             ),
                           ),
                           const SizedBox(
-                            height: 10,
-                          ),
-                          Container(
-                            alignment: Alignment.center,
-                            padding: const EdgeInsets.only(top: 40.0),
-                            child: ElevatedButton(
-                              onPressed: () {},
-                              child: const Text("Submit"),
-                              style: ElevatedButton.styleFrom(
-                                  fixedSize: const Size(90, 40),
-                                  textStyle: const TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w600),
-                                  primary:
-                                      const Color.fromARGB(255, 255, 255, 255),
-                                  onPrimary: Colors.black),
-                            ),
-                          ),
-                          const SizedBox(
                             height: 20,
                           ),
                         ],
