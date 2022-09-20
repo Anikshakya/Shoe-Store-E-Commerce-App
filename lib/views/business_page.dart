@@ -10,13 +10,14 @@ import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class BusinessPage extends StatefulWidget {
-  final pageName, image, logo, website, id, description;
+  final pageName, image, logo, website, id, description, pageEmail;
   const BusinessPage({
     Key? key,
     this.pageName,
     this.image,
     this.logo,
     this.website,
+    required this.pageEmail,
     this.id, this.description,
   }) : super(key: key);
 
@@ -113,10 +114,46 @@ class _BusinessPageState extends State<BusinessPage> {
                                     widget.description,
                                     style: const TextStyle(color: Colors.white),
                                   ),
-                                  const Text(
-                                    'asdfg',
-                                    style: TextStyle(color: Colors.white),
-                                  ),
+                                   Row(
+                                     children:[
+                                      const Text('Followers: ', style: TextStyle(color: Colors.white),),
+                                      //Followers
+                                      StreamBuilder<QuerySnapshot>(
+                                  stream: FirebaseFirestore.instance
+                                      .collection("pages")
+                                      .doc(widget.pageEmail)
+                                      .collection("followers")
+                                      .snapshots(),
+                                  builder: ((context, snapshot) {
+                                    if (!snapshot.hasData) {
+                                      return const SizedBox();
+                                    } else if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return const SizedBox();
+                                    } else {
+                                      List<QueryDocumentSnapshot<Object?>>
+                                          firestoreData = snapshot.data!.docs;
+                                      return Container(
+                                        height: 17,
+                                        width: 17,
+                                        decoration: const BoxDecoration(
+                                          color: Color.fromARGB(
+                                              255, 255, 217, 193),
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Center(
+                                          child: Text( firestoreData.length.toString(),
+                                            style: const TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 11),
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  }),
+                                ),
+                                     ],
+                                   ),
                                 ],
                               ),
                               ElevatedButton(
@@ -307,9 +344,23 @@ class _BusinessPageState extends State<BusinessPage> {
       ),
     );
     try {
+
+      //followers count of page
+       Map<String, dynamic> pageFollowerCount = {
+        'folower_email': user!.email,
+      };
+
+      DocumentReference pageFollowerCountRef = FirebaseFirestore.instance
+          .collection("pages")
+          .doc(widget.pageEmail)
+          .collection("followers")
+          .doc(user.email);
+      pageFollowerCountRef.set(pageFollowerCount);
+
+      //following count of user
       DocumentReference documentReferencer = FirebaseFirestore.instance
           .collection("following")
-          .doc(user!.email)
+          .doc(user.email)
           .collection("pages")
           .doc(widget.id);
       Map<String, dynamic> data = {

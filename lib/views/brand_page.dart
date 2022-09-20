@@ -13,7 +13,7 @@ class BrandPage extends StatefulWidget {
   final brandName, image, logo, website, id, createdTime;
   const BrandPage({
     Key? key,
-    this.brandName,
+    required this.brandName,
     this.image,
     this.logo,
     this.website,
@@ -90,16 +90,52 @@ class _BrandPageState extends State<BrandPage> {
                               ),
                               Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
-                                children: const [
-                                  Text(
+                                children: [
+                                  const Text(
                                     'asdfg',
                                     style: TextStyle(color: Colors.white),
                                   ),
-                                  Text(
-                                    'asdfg',
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                  Text(
+                                  Row(
+                                     children:[
+                                      const Text('Followers: ', style: TextStyle(color: Colors.white),),
+                                      //Followers
+                                      StreamBuilder<QuerySnapshot>(
+                                  stream: FirebaseFirestore.instance
+                                      .collection("brand")
+                                      .doc(widget.brandName)
+                                      .collection("followers")
+                                      .snapshots(),
+                                  builder: ((context, snapshot) {
+                                    if (!snapshot.hasData) {
+                                      return const SizedBox();
+                                    } else if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return const SizedBox();
+                                    } else {
+                                      List<QueryDocumentSnapshot<Object?>>
+                                          firestoreData = snapshot.data!.docs;
+                                      return Container(
+                                        height: 17,
+                                        width: 17,
+                                        decoration: const BoxDecoration(
+                                          color: Color.fromARGB(
+                                              255, 255, 217, 193),
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Center(
+                                          child: Text( firestoreData.length.toString(),
+                                            style: const TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 11),
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  }),
+                                ),
+                                     ],
+                                   ),
+                                  const Text(
                                     'asdfg',
                                     style: TextStyle(color: Colors.white),
                                   ),
@@ -291,9 +327,22 @@ class _BrandPageState extends State<BrandPage> {
       ),
     );
     try {
+
+      //followers count of page
+       Map<String, dynamic> brandFollowersRef = {
+        'folower_email': user!.email,
+      };
+      DocumentReference brandFollowerCountRef = FirebaseFirestore.instance
+          .collection("brand")
+          .doc(widget.brandName)
+          .collection("followers")
+          .doc(user.email);
+      brandFollowerCountRef.set(brandFollowersRef);
+
+      //For Following count
       DocumentReference documentReferencer = FirebaseFirestore.instance
           .collection("following")
-          .doc(user!.email)
+          .doc(user.email)
           .collection("pages")
           .doc(widget.id);
       Map<String, dynamic> data = {
