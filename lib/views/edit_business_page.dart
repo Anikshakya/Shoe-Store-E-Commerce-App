@@ -649,7 +649,79 @@ Future uploadFile(context) async {
           duration: const Duration(seconds: 2),
           backgroundColor: const Color.fromARGB(176, 255, 82, 82));
       }
-    }else {
+    }else if(_imageFile != null && _logoFile != null){// if both images are uploaded
+      var user = FirebaseAuth.instance.currentUser;
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => const Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+      final imageFileName = basename(_imageFile!.path);
+      final logoFileName = basename(_logoFile!.path);
+      String destinationImage = "images/$imageFileName";
+      String destinationLogo = "images/$logoFileName";
+      try {
+        final refImg = FirebaseStorage.instance.ref(destinationImage);
+        final refLogo = FirebaseStorage.instance.ref(destinationLogo);
+        UploadTask uploadImage = refImg.putFile(_imageFile!);
+        UploadTask uploadLogo = refLogo.putFile(_logoFile!);
+        uploadLogo.whenComplete(() async{
+          String logoUrl = await refLogo.getDownloadURL();
+          if (logoUrl !='') {
+            DocumentReference documentReferencer = FirebaseFirestore.instance.collection("pages").doc(user!.email);
+            Map<String, dynamic> data = {
+              'logo': logoUrl,
+              'name': nameController.text.trim(),
+              'website': websiteLinkController.text.trim(),
+              'description': descriptionController.text.trim(),
+            };
+            await documentReferencer
+                .update(data)
+                .then((value) => Navigator.pop(context))
+                .then((value) => Navigator.pop(context))
+                .then((value) =>Get.snackbar(
+            "Successful", "Editeed Succcesfully",
+            duration: const Duration(seconds: 2),
+            backgroundColor: Colors.greenAccent))
+                .then((value) => setState(() {
+                      box.write("logo", null);
+                    }));
+          }
+        });
+        uploadImage.whenComplete(() async {
+          //download and update the file
+          String imageUrl = await refImg.getDownloadURL();
+          String logoUrl = await refLogo.getDownloadURL();
+          if (imageUrl != '' && logoUrl !='') {
+            DocumentReference documentReferencer = FirebaseFirestore.instance.collection("pages").doc(user!.email);
+            Map<String, dynamic> data = {
+              'image': imageUrl,
+              'logo': logoUrl,
+              'name': nameController.text.trim(),
+              'website': websiteLinkController.text.trim(),
+              'description': descriptionController.text.trim(),
+            };
+            await documentReferencer
+                .update(data)
+                .then((value) => Navigator.pop(context))
+                .then((value) => Navigator.pop(context))
+                .then((value) =>Get.snackbar(
+            "Successful", "Editeed Succcesfully",
+            duration: const Duration(seconds: 2),
+            backgroundColor: Colors.greenAccent))
+                .then((value) => setState(() {
+                      box.write("a", null);
+                    }));
+          }
+        });
+      } on FirebaseException catch (e) {
+        Get.snackbar("Error", e.toString(),
+          duration: const Duration(seconds: 2),
+          backgroundColor: const Color.fromARGB(176, 255, 82, 82));
+      }
+    }else{
       var user = FirebaseAuth.instance.currentUser;
       showDialog(
         context: context,
@@ -661,7 +733,7 @@ Future uploadFile(context) async {
 
       //For Image
       if(_logoFile == null){
-        final fileName = basename(_imageFile!.path);
+      final fileName = basename(_imageFile!.path);
       String destination = "images/$fileName";
          //-----Upload image File and update-----
       try {
