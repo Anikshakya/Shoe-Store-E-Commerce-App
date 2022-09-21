@@ -272,6 +272,7 @@ class _OrderPageState extends State<OrderPage> {
                                       website: firestoreBrand[0]['website'],
                                           image: firestoreBrand[0]["image"],
                                           logo: firestoreBrand[0]["logo"],
+                                          pageEmail: firestoreBrand[0]["email"],
                                           brandName: widget.brand,
                                         )),
                                     child: Row(

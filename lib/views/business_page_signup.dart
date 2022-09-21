@@ -272,8 +272,7 @@ class _BusinessPageSignUpState extends State<BusinessPageSignUp> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: const [
                       Text("By creating a business profile you accept our"),
-                      Text(
-                        "Terms of Services and Privacy Policy",
+                      Text( "Terms of Services and Privacy Policy",
                         style: TextStyle(fontWeight: FontWeight.w500),
                         maxLines: 2,
                       ),
@@ -320,8 +319,7 @@ class _BusinessPageSignUpState extends State<BusinessPageSignUp> {
       );
 
       Map<String, dynamic> data = {
-        'role': 'vendor',
-        'admin_role': nameController.text.trim().toString(),
+        'role': 'creator',
       };
       await FirebaseFirestore.instance.collection("users").doc(user!.email)
           .update(data)

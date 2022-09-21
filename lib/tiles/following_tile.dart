@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class FollowingTile extends StatelessWidget {
-  final logo, name, id, website;
+  final logo, name, id, website, pageEmail;
   final VoidCallback ontap;
   const FollowingTile(
       {Key? key,
@@ -15,7 +15,8 @@ class FollowingTile extends StatelessWidget {
       this.logo,
       this.name,
       this.id,
-      this.website})
+      this.website, 
+      required this.pageEmail})
       : super(key: key);
 
   @override
@@ -70,6 +71,8 @@ class FollowingTile extends StatelessWidget {
 
   unfollow() {
     var user = FirebaseAuth.instance.currentUser;
+
+    //For users unfollow count
     FirebaseFirestore.instance
         .collection("following")
         .doc(user!.email)
@@ -81,5 +84,20 @@ class FollowingTile extends StatelessWidget {
               "",
               duration: const Duration(seconds: 1),
             ));
+    //For brand unfollow count
+    FirebaseFirestore.instance
+        .collection("brand")
+        .doc(name)
+        .collection("followers")
+        .doc(user.email)
+        .delete();
+
+   //For page unfollow count
+   FirebaseFirestore.instance
+        .collection("pages")
+        .doc(pageEmail)
+        .collection("followers")
+        .doc(user.email)
+        .delete();
   }
 }

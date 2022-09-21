@@ -10,7 +10,7 @@ import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class BrandPage extends StatefulWidget {
-  final brandName, image, logo, website, id, createdTime;
+  final brandName, image, logo, website, id, createdTime, pageEmail;
   const BrandPage({
     Key? key,
     required this.brandName,
@@ -18,7 +18,8 @@ class BrandPage extends StatefulWidget {
     this.logo,
     this.website,
     this.id,
-    this.createdTime,
+    this.createdTime, 
+    this.pageEmail,
   }) : super(key: key);
 
   @override
@@ -142,19 +143,26 @@ class _BrandPageState extends State<BrandPage> {
                                 ],
                               ),
                               StreamBuilder<QuerySnapshot>(
-                                stream: FirebaseFirestore.instance.collection('following').doc(user!.email).collection('pages').where('page_id', isEqualTo: widget.id.toString()).snapshots(),
+                                stream: FirebaseFirestore.instance.collection('brand').doc(widget.brandName).collection('followers').where('follower_email', isEqualTo: user!.email).snapshots(),
                                 builder: (context, snapshot) {
-                                  // List<QueryDocumentSnapshot<Object?>> firestoreData =snapshot.data!.docs;
-                                  return ElevatedButton(
+                                  if (!snapshot.hasData) {
+                                      return const SizedBox();
+                                    } else if (snapshot.connectionState ==ConnectionState.waiting) {
+                                      return const SizedBox();
+                                    }else{
+                                      List<QueryDocumentSnapshot<Object?>> firestoreData =snapshot.data!.docs;
+                                      return ElevatedButton(
                                     style: ElevatedButton.styleFrom(
                                       onPrimary: Colors.white,
                                       primary: Colors.black87,
                                     ),
                                     onPressed: (){
-                                      follow();
+                                     firestoreData.isNotEmpty ? unfollow(): follow();
                                     },
-                                    child: const Text('Follow'),
+                                    child:
+                                    firestoreData.isNotEmpty? const Text('Unfollow'): const Text ('Follow'),
                                   );
+                                  }
                                 }
                               ),
                             ],
@@ -241,8 +249,7 @@ class _BrandPageState extends State<BrandPage> {
                   stream: (searchKey != "")
                       ? FirebaseFirestore.instance
                           .collection('products')
-                          .where("productName",
-                              isGreaterThanOrEqualTo: searchKey)
+                          .where("productName",isGreaterThanOrEqualTo: searchKey)
                           .where("productName", isLessThan: searchKey + 'z')
                           .snapshots()
                       : FirebaseFirestore.instance
@@ -330,7 +337,7 @@ class _BrandPageState extends State<BrandPage> {
 
       //followers count of page
        Map<String, dynamic> brandFollowersRef = {
-        'folower_email': user!.email,
+        'follower_email': user!.email,
       };
       DocumentReference brandFollowerCountRef = FirebaseFirestore.instance
           .collection("brand")
@@ -351,6 +358,7 @@ class _BrandPageState extends State<BrandPage> {
         'page_logo': widget.logo,
         'page_image': widget.image,
         'page_website': widget.website,
+        'page_email': widget.pageEmail,
       };
       documentReferencer.set(data).then((value) => Navigator.pop(context)).then(
           (value) => Get.snackbar("Following", "Succesfully followed",
@@ -368,5 +376,12 @@ class _BrandPageState extends State<BrandPage> {
         .doc(widget.id)
         .delete()
         .then((value) => Get.snackbar("Unfollowed","You have unfollowed the page",duration: const Duration(seconds: 1),));
+    
+    FirebaseFirestore.instance
+        .collection("brand")
+        .doc(widget.brandName)
+        .collection("followers")
+        .doc(user.email)
+        .delete();
   }
 }

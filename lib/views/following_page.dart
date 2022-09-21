@@ -66,6 +66,7 @@ class _FollowingPageState extends State<FollowingPage> {
                                 name: firestoreitems[index]['page_name'],
                                 website: firestoreitems[index]['page_website'],
                                 id: firestoreitems[index]['page_id'].toString(),
+                                pageEmail: firestoreitems[index]['page_email'],
                                 ontap: () {
                                   Get.to(() => BrandPage(
                                        logo: firestoreitems[index]['page_logo'],
@@ -73,6 +74,7 @@ class _FollowingPageState extends State<FollowingPage> {
                                 website: firestoreitems[index]['page_website'],
                                 id: firestoreitems[index]['page_id'],
                                 image: firestoreitems[index]['page_image'],
+                                pageEmail: firestoreitems[index]['page_email'],
                                       ));
                                 });
                           });

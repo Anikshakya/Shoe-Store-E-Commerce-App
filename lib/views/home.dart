@@ -110,7 +110,7 @@ class _HomePageState extends State<HomePage> {
                       );
                     }
                   }),
-                ),
+                ), 
               ],
             ),
           ),
@@ -452,6 +452,7 @@ class _HomePageState extends State<HomePage> {
                                 image: firestoreProducts[index]['image'],
                                 logo: firestoreProducts[index]['logo'],
                                 website: firestoreProducts[index]['website'],
+                                pageEmail: firestoreProducts[index]['email'],
                                 brandName: firestoreProducts[index]
                                     ['brand_name'],
                               )),
@@ -774,40 +775,18 @@ class _HomePageState extends State<HomePage> {
                                                 ["image"],
                                             ontap: () => Get.to(
                                                   () => OrderPage(
-                                                    image:
-                                                        firestoreProducts[index]
-                                                            ['image'],
-                                                    price:
-                                                        firestoreProducts[index]
-                                                            ['price'],
-                                                    name:
-                                                        firestoreProducts[index]
-                                                            ['productName'],
-                                                    brand:
-                                                        firestoreProducts[index]
-                                                                ['brand_store']
-                                                            .toUpperCase(),
-                                                    description:
-                                                        firestoreProducts[index]
-                                                            ["description"],
-                                                    discount:
-                                                        firestoreProducts[index]
-                                                                ['discount']
-                                                            .toString(),
-                                                    category:
-                                                        firestoreProducts[index]
-                                                            ['category'],
-                                                    offer:
-                                                        firestoreProducts[index]
-                                                            ['offer'],
-                                                    productID:
-                                                        firestoreProducts[index]
-                                                            ['productID'],
-                                                    type:
-                                                        firestoreProducts[index]
-                                                            ['type'],
+                                                    image: firestoreProducts[index]['image'],
+                                                    price: firestoreProducts[index]['price'],
+                                                    name: firestoreProducts[index]['productName'],
+                                                    brand: firestoreProducts[index]['brand_store'],
+                                                    description: firestoreProducts[index]["description"],
+                                                    discount: firestoreProducts[index]['discount'].toString(),
+                                                    category: firestoreProducts[index]['category'],
+                                                    offer: firestoreProducts[index]['offer'],
+                                                    productID: firestoreProducts[index]['productID'],
+                                                    type: firestoreProducts[index]['type'],
                                                   ),
-                                                )),
+                                                  )),
                                       ),
                                     ),
                                   );

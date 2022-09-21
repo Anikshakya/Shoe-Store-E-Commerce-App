@@ -477,7 +477,7 @@ class _SettingsState extends State<SettingsPage> {
                       } else {
                         List<QueryDocumentSnapshot<Object?>> firestoreUsers =
                             snapshot.data!.docs;
-                        return firestoreUsers[0]["role"] == "vendor"
+                        return firestoreUsers[0]["role"] == "creator"
                             ? GestureDetector(
                                 onTap: () => Get.to(() => BusinssPageAdmin()),
                                 child: Padding(
@@ -543,6 +543,38 @@ class _SettingsState extends State<SettingsPage> {
                               );
                       }
                     },
+                  ),
+
+                  //Brand Page Create
+                  Divider(
+                    indent: 20,
+                    endIndent: 20,
+                  ),
+                  GestureDetector(
+                    onTap: () {},
+                    child: Padding(
+                      padding: const EdgeInsets.all(3),
+                      child: Row(
+                        children: const [
+                          Padding(
+                              padding: EdgeInsets.only(
+                                  top: 8, bottom: 8, left: 10, right: 14),
+                              child: Icon(
+                                Icons.branding_watermark_outlined,
+                                size: 19,
+                                color: Color.fromARGB(255, 116, 116, 116),
+                              )),
+                          Text(
+                            "Brand Partnership",
+                            style: TextStyle(
+                              color: Color.fromARGB(255, 116, 116, 116),
+                              fontSize: 16,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
 
                   Divider(

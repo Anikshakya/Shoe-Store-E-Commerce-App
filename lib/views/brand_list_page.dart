@@ -95,6 +95,7 @@ class _BrandListsState extends State<BrandLists> {
                             logo: firestoreitems[index]["logo"],
                             onTap: () {
                               Get.to(() => BrandPage(
+                                pageEmail: firestoreitems[index]['email'],
                                 id: firestoreitems[index]['brand_id'],
                                 logo: firestoreitems[index]['logo'],
                                 image: firestoreitems[index]['image'],

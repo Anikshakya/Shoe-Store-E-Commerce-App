@@ -156,13 +156,29 @@ class _BusinessPageState extends State<BusinessPage> {
                                    ),
                                 ],
                               ),
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  onPrimary: Colors.white,
-                                  primary: Colors.black87,
-                                ),
-                                onPressed: () => follow(),
-                                child: const Text("Follow"),
+                             StreamBuilder<QuerySnapshot>(
+                                stream: FirebaseFirestore.instance.collection('following').doc(user!.email).collection('pages').where('page_id', isEqualTo: widget.id.toString()).snapshots(),
+                                builder: (context, snapshot) {
+                                  if (!snapshot.hasData) {
+                                      return const SizedBox();
+                                    } else if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return const SizedBox();
+                                    }else{
+                                      List<QueryDocumentSnapshot<Object?>> firestoreData =snapshot.data!.docs;
+                                      return ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      onPrimary: Colors.white,
+                                      primary: Colors.black87,
+                                    ),
+                                    onPressed: (){
+                                     firestoreData.isNotEmpty ? unfollow(): follow();
+                                    },
+                                    child:
+                                    firestoreData.isNotEmpty? const Text('Unfollow'): const Text ('Follow'),
+                                  );
+                                }
+                               }
                               ),
                             ],
                           ),
@@ -369,6 +385,7 @@ class _BusinessPageState extends State<BusinessPage> {
         'page_logo': widget.logo,
         'page_image': widget.image,
         'page_website': widget.website,
+        'page_email':widget.pageEmail,
       };
       documentReferencer.set(data).then((value) => Navigator.pop(context)).then(
           (value) => Get.snackbar("Following", "Succesfully followed",
@@ -376,5 +393,23 @@ class _BusinessPageState extends State<BusinessPage> {
     } on FirebaseException catch (e) {
       Get.snackbar("Error", e.toString(), backgroundColor: Colors.redAccent);
     }
+  }
+
+  unfollow() {
+    var user = FirebaseAuth.instance.currentUser;
+    FirebaseFirestore.instance
+        .collection("following")
+        .doc(user!.email)
+        .collection("pages")
+        .doc(widget.id)
+        .delete()
+        .then((value) => Get.snackbar("Unfollowed","You have unfollowed the page",duration: const Duration(seconds: 1),));
+    
+    FirebaseFirestore.instance
+        .collection("pages")
+        .doc(widget.pageEmail)
+        .collection("followers")
+        .doc(user.email)
+        .delete();
   }
 }
